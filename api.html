@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+    //initializing variables
+    let resData = '';
+    let fullText = '';
+    //setting request URL for Cities
+    axios.get('https://api.musement.com/api/v3/cities')
+        .then(res => {
+            res.data.forEach(el => {
+                //setting request URL for Weather
+                axios.get(`https://api.weatherapi.com/v1/forecast.json?key=a7bb5a447ea84efc986162443210111&q=${el.latitude},${el.longitude}&days=2`)
+                    .then(result => {
+                        //get the result and put the content
+                        fullText = `Processed city ${el.code} | ${result.data.current.condition.text} - ${result.data.forecast.forecastday[0].day.condition.text}`;
+                        console.log(fullText);
+                        resData += '<p>'+fullText+'</p>';
+                        document.getElementById('content').innerHTML = resData
+                    })
+                    .catch(error => console.log('error',error))
+            });
+        })
+        .catch(err => console.log('err',err));
+</script>
+<body>
+    //display output
+    <div id="content"></div>
+</body>
+</html>
